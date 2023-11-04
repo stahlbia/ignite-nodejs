@@ -10,14 +10,11 @@ export const routes = [
         path: buildRoutePath('/tasks'),
         handler: (req, res) => {
             const { search } = req.query
-            const users = database.select('tasks', search ? {
+            const tasks = database.select('tasks', search ? {
                 title: search,
-                description: search,
-                completed_at: search,
-                created_at: search,
-                updated_at: search,
+                description: search
             } : null)
-            return res.end(JSON.stringify(users))
+            return res.end(JSON.stringify(tasks))
         }
     },
     {
@@ -25,13 +22,14 @@ export const routes = [
         path: buildRoutePath('/tasks'),
         handler: (req, res) => {
             const { title, description } = req.body
+            const currentDate = new Date().toLocaleDateString()
             const task = {
                 id: randomUUID(),
                 title,
                 description,
                 completed_at: null,
-                created_at: new Date().getDate(),
-                updated_at: created_at,
+                created_at: currentDate,
+                updated_at: currentDate,
             }
             database.insert('tasks', task)
 
@@ -40,35 +38,37 @@ export const routes = [
     },
     {
         method: 'PUT', // edit something on the task
-        path: buildRoutePath('/tasks:id'),
+        path: buildRoutePath('/tasks/:id'),
         handler: (req, res) => {
             const { id } = req.params
             const { title, description } = req.body
+            const currentDate = new Date().toLocaleDateString()
             database.update('tasks', id, {
                 title,
                 description,
                 completed_at,
                 created_at,
-                updated_at: new Date().getDate(),
+                updated_at: currentDate,
             })
             return res.writeHead(204).end()
         }
     },
     {
         method: 'PATCH', // mark the task as completed
-        path: buildRoutePath('/tasks:id'),
+        path: buildRoutePath('/tasks/:id/complete'),
         handler: (req, res) => {
             const { id } = req.params
-            database.update('tasks', id, {
-                completed_at: new Date().getDate(),
-                updated_at: completed_at,
+            const currentDate = new Date().toLocaleDateString()
+            database.completed('tasks', id, {
+                completed_at: currentDate,
+                updated_at: currentDate,
             })
             return res.writeHead(204).end()
         }
     },
     {
         method: 'DELETE', // delete the task
-        path: buildRoutePath('/tasks:id'),
+        path: buildRoutePath('/tasks/:id'),
         handler: (req, res) => {
             const { id } = req.params
             database.delete('tasks', id)
