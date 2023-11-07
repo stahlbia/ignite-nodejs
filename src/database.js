@@ -23,12 +23,11 @@ export class Database {
         if (search) {
             data = data.filter((row) => {
                 return Object.entries(search).some(([key, value]) => {
-                    return row[key].toLowerCase().includes(value.toLowerCase());
+                    if (!value) return true;
+                    return row[key].includes(value);
                 });
             });
         }
-
-        this.#persist();
         return data;
     }
 
@@ -38,6 +37,7 @@ export class Database {
         } else {
             this.#database[table] = [data];
         }
+        this.#persist()
         return data;
     }
 
@@ -52,18 +52,9 @@ export class Database {
 
     update(table, id, data) {
         const rowIndex = this.#database[table].findIndex((row) => row.id === id);
-
         if (rowIndex > -1) {
-            this.#database[table][rowIndex] = { id, ...data };
-            this.#persist();
-        }
-    }
-
-    completed(table, id, date) {
-        const rowIndex = this.#database[table].findIndex((row) => row.id === id);
-        if (rowIndex > -1) {
-            this.#database[table][rowIndex].completed_at = date.completed_at;
-            this.#database[table][rowIndex].updated_at = date.updated_at;
+            const row = this.#database[table][rowIndex]
+            this.#database[table][rowIndex] = { id, ...row, ...data }
             this.#persist();
         }
     }
