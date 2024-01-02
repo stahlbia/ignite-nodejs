@@ -12,5 +12,14 @@ declare module "knex/types/tables" {
       pictureURL?: string;
       created_at: string;
     };
+    meals: {
+      id: string;
+      user_id: string;
+      name: string;
+      description?: string;
+      date_time?: string;
+      on_diet: boolean;
+      registered_at: string;
+    };
   }
 }
