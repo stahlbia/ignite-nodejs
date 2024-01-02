@@ -45,6 +45,11 @@ export async function usersRoutes(app: FastifyInstance) {
           .send({ message: "Invalid username or password" });
       }
 
+      reply.setCookie("userId", user.id, {
+        path: "/",
+        maxAge: 1000 * 60 * 60 * 24 * 1, // 1 day
+      });
+
       return reply.status(201).send({ message: "Login successful" });
     } catch (error) {
       return reply.status(500).send({ message: "Internal Server Error" });
