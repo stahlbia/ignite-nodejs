@@ -10,11 +10,11 @@ export const knexConfig: Knex.Config = {
   connection: {
     filename: env.DATABASE_URL,
   },
-  useNullAsDefault: true,
   migrations: {
     extension: "ts",
-    directory: "./.tmp/migrations",
+    directory: "./db/migrations",
   },
+  useNullAsDefault: true,
 };
 
 export const knex = createKnex(knexConfig);
