@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 db/app.db
+.vscode
+.env.test
