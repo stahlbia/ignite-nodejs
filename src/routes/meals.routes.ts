@@ -5,6 +5,19 @@ import { knex } from "../database";
 import { checkLoginSessionExists } from "../middlewares/check-login-session-exists";
 
 export async function mealsRoutes(app: FastifyInstance) {
+  app.get(
+    "/",
+    { preHandler: [checkLoginSessionExists] },
+    async (request, reply) => {
+      const userId = request.cookies.userId;
+      const meals = await knex("meals")
+        .where({ user_id: userId })
+        .orderBy("date", "desc");
+
+      return reply.send({ meals });
+    },
+  );
+
   app.post(
     "/create",
     { preHandler: [checkLoginSessionExists] },
