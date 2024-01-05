@@ -18,6 +18,23 @@ export async function mealsRoutes(app: FastifyInstance) {
     },
   );
 
+  app.get(
+    "/:mealId",
+    { preHandler: [checkLoginSessionExists] },
+    async (request, reply) => {
+      const paramsSchema = z.object({ mealId: z.string().uuid() });
+
+      const { mealId } = paramsSchema.parse(request.params);
+      const userId = request.cookies.userId;
+
+      const meals = await knex("meals")
+        .where({ user_id: userId, id: mealId })
+        .first();
+
+      return reply.send({ meals });
+    },
+  );
+
   app.post(
     "/create",
     { preHandler: [checkLoginSessionExists] },
